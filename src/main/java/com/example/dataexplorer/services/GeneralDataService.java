@@ -1,11 +1,11 @@
 package com.example.dataexplorer.services;
 
+import com.example.dataexplorer.entities.PacketsStats;
+
 import java.util.List;
 
 public interface GeneralDataService {
 
-    long getTotalParsedPackets();
-    long getTotalRawPackets();
-    long getTotalParsedPacketsBySnifferMac(String snifferMac);
-    long getTotalRawPacketsBySnifferMac(String snifferMac);
+    PacketsStats getParsedPacketsStats();
+    PacketsStats getParsedPacketsStatsBySnifferId(String id);
 }
