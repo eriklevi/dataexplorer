@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -40,9 +42,11 @@ public class GeneralDataServiceImpl implements GeneralDataService {
         if(optionalSnifferData.isPresent()){
             SnifferData snifferData = optionalSnifferData.get();
             PacketsStats ps = new PacketsStats();
-            ps.setGlobal(mongoTemplate.count(new Query(Criteria.where("global").is(true).and("snifferName").is(snifferData.getName()).and("buildingName").is(snifferData.getBuildingName()).and("roomName").is(snifferData.getRoomName())), "parsedPackets"));
-            ps.setLocal(mongoTemplate.count(new Query(Criteria.where("global").is(false).and("snifferName").is(snifferData.getName()).and("buildingName").is(snifferData.getBuildingName()).and("roomName").is(snifferData.getRoomName())), "parsedPackets"));
+            ps.setGlobal(mongoTemplate.count(new Query(Criteria.where("global").is(true).and("snifferName").is(snifferData.getName()).and("snifferBuilding").is(snifferData.getBuildingName()).and("snifferRoom").is(snifferData.getRoomName())), "parsedPackets"));
+            ps.setLocal(mongoTemplate.count(new Query(Criteria.where("global").is(false).and("snifferName").is(snifferData.getName()).and("snifferBuilding").is(snifferData.getBuildingName()).and("snifferRoom").is(snifferData.getRoomName())), "parsedPackets"));
             return ps;
+        } else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No sniffer found with given ID");
         }
     }
 }

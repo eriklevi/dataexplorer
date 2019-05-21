@@ -250,6 +250,7 @@ public class CountedPacketsServiceImpl implements CountedPacketsService{
         Aggregation aggregation = newAggregation(matchOperation, groupOperation, sortOperation);
         AggregationResults results = mongoTemplate.aggregate(aggregation, "countedPackets", CountedpacketsResult.class);
         List<CountedpacketsResult> res =  results.getMappedResults();
+        long startTimestamp
         return res;
     }
 }

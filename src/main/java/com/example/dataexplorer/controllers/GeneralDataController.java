@@ -19,7 +19,7 @@ public class GeneralDataController {
     private GeneralDataService generalDataService;
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-    @RequestMapping(value= "/parsed/", method = RequestMethod.GET)
+    @RequestMapping(value= "/parsed", method = RequestMethod.GET)
     public PacketsStats getTotalParsed(){
         return this.generalDataService.getParsedPacketsStats();
     }
