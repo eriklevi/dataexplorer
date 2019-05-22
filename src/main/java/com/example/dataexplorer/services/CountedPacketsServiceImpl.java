@@ -278,7 +278,7 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
         while (startTimestamp < endTimestamp) {
             if (i < res.size()) {
                 CountedpacketsResult cpr = res.get(i);
-                if (cpr.getStartTimestamp() != startTimestamp) {
+                if (startTimestamp < cpr.getStartTimestamp()) {
                     CountedpacketsResult countedpacketsResult = new CountedpacketsResult();
                     countedpacketsResult.setAvgEstimatedDevices(0);
                     countedpacketsResult.setTotalPackets(0);
