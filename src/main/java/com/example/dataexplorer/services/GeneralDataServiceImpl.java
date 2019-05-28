@@ -2,10 +2,12 @@ package com.example.dataexplorer.services;
 
 import com.example.dataexplorer.entities.PacketsStats;
 import com.example.dataexplorer.entities.SnifferData;
+import com.example.dataexplorer.repositories.CountedPacketsRepository;
 import com.example.dataexplorer.repositories.SnifferDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,10 +24,12 @@ public class GeneralDataServiceImpl implements GeneralDataService {
 
     private final MongoTemplate mongoTemplate;
     private final SnifferDataRepository snifferDataRepository;
+    private final CountedPacketsRepository countedPacketsRepository;
 
-    public GeneralDataServiceImpl(MongoTemplate mongoTemplate, SnifferDataRepository snifferDataRepository) {
+    public GeneralDataServiceImpl(MongoTemplate mongoTemplate, SnifferDataRepository snifferDataRepository, CountedPacketsRepository countedPacketsRepository) {
         this.mongoTemplate = mongoTemplate;
         this.snifferDataRepository = snifferDataRepository;
+        this.countedPacketsRepository = countedPacketsRepository;
     }
 
     @Override
@@ -48,5 +52,10 @@ public class GeneralDataServiceImpl implements GeneralDataService {
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No sniffer found with given ID");
         }
+    }
+
+    @Override
+    public int getLastDeviceNumberEstimationById(String id) {
+        return this.countedPacketsRepository.findTopBySnifferIdOrderByStartTimestampDesc(id).getTotalEstimatedDevices();
     }
 }

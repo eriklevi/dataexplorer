@@ -8,9 +8,12 @@ public class CountedPacket {
     @Id
     private String id;
     private String snifferMac;
+    private String snifferId;
     private String snifferName;
+    private String buildingId;
     private String buildingName;
     private String roomName;
+    private String roomId;
     private int totalPackets;
     private int globalPackets;
     private int localPackets;

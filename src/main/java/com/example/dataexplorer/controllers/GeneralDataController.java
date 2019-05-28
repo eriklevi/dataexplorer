@@ -30,4 +30,11 @@ public class GeneralDataController {
         return this.generalDataService.getParsedPacketsStatsBySnifferId(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    @RequestMapping(value= "/counted/{id}/last", method = RequestMethod.GET)
+    public int getLastDeviceNumberEstimationById(@PathVariable String id){
+        return this.generalDataService.getLastDeviceNumberEstimationById(id);
+    }
+
+
 }

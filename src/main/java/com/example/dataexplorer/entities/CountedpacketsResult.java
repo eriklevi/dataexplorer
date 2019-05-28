@@ -8,8 +8,8 @@ public class CountedpacketsResult {
     private int totalPackets;
     private int globalPackets;
     private int localPackets;
-    private int totalDistinctMacAddresses;
-    private int totalDistinctFingerprints;
+    private int distinctMacAddresses;
+    private int distinctFingerprints;
     private int avgEstimatedDevices;
     private long startTimestamp;
     private int year;
@@ -80,20 +80,20 @@ public class CountedpacketsResult {
         this.localPackets = localPackets;
     }
 
-    public int getTotalDistinctMacAddresses() {
-        return totalDistinctMacAddresses;
+    public int getDistinctMacAddresses() {
+        return distinctMacAddresses;
     }
 
-    public void setTotalDistinctMacAddresses(int totalDistinctMacAddresses) {
-        this.totalDistinctMacAddresses = totalDistinctMacAddresses;
+    public void setDistinctMacAddresses(int distinctMacAddresses) {
+        this.distinctMacAddresses = distinctMacAddresses;
     }
 
-    public int getTotalDistinctFingerprints() {
-        return totalDistinctFingerprints;
+    public int getDistinctFingerprints() {
+        return distinctFingerprints;
     }
 
-    public void setTotalDistinctFingerprints(int totalDistinctFingerprints) {
-        this.totalDistinctFingerprints = totalDistinctFingerprints;
+    public void setDistinctFingerprints(int distinctFingerprints) {
+        this.distinctFingerprints = distinctFingerprints;
     }
 
     public int getAvgEstimatedDevices() {

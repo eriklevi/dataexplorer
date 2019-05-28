@@ -8,4 +8,5 @@ public interface GeneralDataService {
 
     PacketsStats getParsedPacketsStats();
     PacketsStats getParsedPacketsStatsBySnifferId(String id);
+    int getLastDeviceNumberEstimationById(String id);
 }
