@@ -1,8 +1,8 @@
 package com.example.dataexplorer.entities;
 
 public class DeviceData {
-    String snifferMac;
-    String timestamp;
+    String mac;
+    long timestamp;
     String snifferId;
     String snifferName;
     String snifferBuilding;
@@ -12,19 +12,19 @@ public class DeviceData {
     public DeviceData() {
     }
 
-    public String getSnifferMac() {
-        return snifferMac;
+    public String getMac() {
+        return mac;
     }
 
-    public void setSnifferMac(String snifferMac) {
-        this.snifferMac = snifferMac;
+    public void setMac(String mac) {
+        this.mac = mac;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
