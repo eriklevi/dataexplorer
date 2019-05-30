@@ -6,6 +6,6 @@ import com.example.dataexplorer.entities.DeviceInfo;
 import java.util.List;
 
 public interface DeviceTrackingService {
-    List<DeviceData> getDeviceDataByDayAndMacAddress(int year, int month, int day, String mac);
-    List<DeviceInfo> getDistinctMacByDay(int year, int month, int day, int hour);
+    List<DeviceData> getDeviceDataByDayAndMacAddress(long from, long to, String mac);
+    List<DeviceInfo> getDistinctMacByDay(long from, long to);
 }

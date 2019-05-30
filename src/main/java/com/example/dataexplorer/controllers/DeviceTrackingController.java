@@ -1,6 +1,5 @@
 package com.example.dataexplorer.controllers;
 
-import com.example.dataexplorer.entities.CountedpacketsResult;
 import com.example.dataexplorer.entities.DeviceData;
 import com.example.dataexplorer.entities.DeviceInfo;
 import com.example.dataexplorer.services.DeviceTrackingService;
@@ -18,20 +17,17 @@ public class DeviceTrackingController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     @RequestMapping(value= "/track", method = RequestMethod.GET)
-    public List<DeviceData> getResultsByBuilding(@RequestParam int year
-            , @RequestParam int month
-            , @RequestParam int day
+    public List<DeviceData> getResultsByBuilding(@RequestParam long from
+            , @RequestParam long to
             , @RequestParam String mac){
-        return deviceTrackingService.getDeviceDataByDayAndMacAddress(year, month, day, mac);
+        return deviceTrackingService.getDeviceDataByDayAndMacAddress(from, to, mac);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    @RequestMapping(value= "/track/oui", method = RequestMethod.GET)
-    public List<DeviceInfo> getResultsByBuilding(@RequestParam int year
-            , @RequestParam int month
-            , @RequestParam int day
-            , @RequestParam int hour){
-        return deviceTrackingService.getDistinctMacByDay(year, month, day, hour);
+    @RequestMapping(value= "/track/deviceinfo", method = RequestMethod.GET)
+    public List<DeviceInfo> getResultsByBuilding(@RequestParam long from
+            , @RequestParam long to){
+        return deviceTrackingService.getDistinctMacByDay(from, to);
     }
 
 

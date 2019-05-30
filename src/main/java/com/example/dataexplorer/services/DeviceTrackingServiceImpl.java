@@ -29,12 +29,12 @@ public class DeviceTrackingServiceImpl implements DeviceTrackingService {
     private OuiRepository ouiRepository;
 
     @Override
-    public List<DeviceData> getDeviceDataByDayAndMacAddress(int year, int month, int day, String mac){
+    public List<DeviceData> getDeviceDataByDayAndMacAddress(long from, long to, String mac){
         long[] timestamps = new long[4096];
-        List<DeviceData> list = mongoTemplate.find(new Query(Criteria.where("deviceMac").is(mac)
-                .and("year").is(year)
-                .and("month").is(month)
-                .and("dayOfMonth").is(day))
+        List<DeviceData> list = mongoTemplate.find(
+                new Query(
+                        Criteria.where("deviceMac").is(mac)
+                        .and("timestamp").gte(from).lte(to))
                         .with(new Sort(Sort.Direction.ASC, "timestamp"))
                 , DeviceData.class
                 , "parsedPackets");
@@ -59,14 +59,11 @@ public class DeviceTrackingServiceImpl implements DeviceTrackingService {
     }
 
     @Override
-    public List<DeviceInfo> getDistinctMacByDay(int year, int month, int day, int hour) {
+    public List<DeviceInfo> getDistinctMacByDay(long from, long to) {
         List<String> list = mongoTemplate.findDistinct(
                 new Query(
                         Criteria
-                                .where("year").is(year)
-                                .and("month").is(month)
-                                .and("dayOfMonth").is(day)
-                                .and("hour").is(hour)
+                                .where("timestamp").gte(from).lte(to)
                                 .and("global").is(true)
                 )
                 , "deviceMac"
