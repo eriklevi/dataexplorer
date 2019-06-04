@@ -25,7 +25,7 @@ public class CountedPacketsController {
     public List<CountedpacketsResult> getResultsByBuilding(@PathVariable String building
             , @RequestParam long from
             , @RequestParam long to
-            , @RequestParam String type
+            , @RequestParam String mode
             , @RequestParam String resolution){
         return countedPacketsService.getResultsByBuilding(building, from, to, resolution);
     }
@@ -36,12 +36,20 @@ public class CountedPacketsController {
             , @PathVariable String room
             , @RequestParam long from
             , @RequestParam long to
-            , @RequestParam String type
-            , @RequestParam String resolution
-            , @RequestParam String sniffer){
-        if(sniffer != null){
-            return countedPacketsService.getResultsBySniffer(building, room, sniffer, from, to, resolution);
-        }
+            , @RequestParam String mode
+            , @RequestParam String resolution){
         return countedPacketsService.getResultsByRoom(building, room, from, to, resolution);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    @RequestMapping(value= "/{building}/{room}/{sniffer}", method = RequestMethod.GET)
+    public List<CountedpacketsResult> getResultsBySniffer(@PathVariable String building
+            , @PathVariable String room
+            , @PathVariable String sniffer
+            , @RequestParam long from
+            , @RequestParam long to
+            , @RequestParam String mode
+            , @RequestParam String resolution){
+        return countedPacketsService.getResultsBySniffer(building, room, sniffer, from, to, resolution);
     }
 }

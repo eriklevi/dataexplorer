@@ -26,6 +26,7 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
 
     @Override
     public List<CountedpacketsResult> getResultsByBuilding(String building, long from, long to, String resolution) {
+        Instant start = Instant.now();
         MatchOperation matchOperation = match(new Criteria("startTimestamp").gte(from).lt(to).and("buildingId").is(building));
         GroupOperation groupOperation;
         switch (resolution) {
@@ -100,11 +101,121 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
         Aggregation aggregation = newAggregation(matchOperation, groupOperation, sortOperation);
         AggregationResults results = mongoTemplate.aggregate(aggregation, "countedPackets", CountedpacketsResult.class);
         List<CountedpacketsResult> res = results.getMappedResults();
+        LocalDateTime ldt = Instant.ofEpochMilli(from).atZone(ZoneId.of("CET")).toLocalDateTime();
+        long startTimestamp = 0;
+        long endTimestamp = 0;
+        if (ldt.getMinute() % 5 != 0)
+            startTimestamp = from + ((5 - (ldt.getMinute() % 5)) * 60000);
+        else
+            startTimestamp = from;
+        ldt = Instant.ofEpochMilli(to).atZone(ZoneId.of("CET")).toLocalDateTime();
+        if (ldt.getMinute() % 5 != 0)
+            endTimestamp = to - ((5 - (ldt.getMinute() % 5)) * 60000);
+        else
+            endTimestamp = to;
+        int i = 0;
+        while (startTimestamp < endTimestamp) {
+            if (i < res.size()) {
+                CountedpacketsResult cpr = res.get(i);
+                if (startTimestamp < cpr.getStartTimestamp()) {
+                    CountedpacketsResult countedpacketsResult = new CountedpacketsResult();
+                    countedpacketsResult.setAvgEstimatedDevices(0);
+                    countedpacketsResult.setTotalPackets(0);
+                    countedpacketsResult.setDistinctMacAddresses(0);
+                    countedpacketsResult.setDistinctFingerprints(0);
+                    countedpacketsResult.setStartTimestamp(startTimestamp);
+                    countedpacketsResult.setLocalPackets(0);
+                    countedpacketsResult.setGlobalPackets(0);
+                    res.add(i, countedpacketsResult);
+                }
+                switch (resolution) {
+                    case "fiveMinute":
+                        startTimestamp += 60000 * 5;
+                        break;
+                    case "fifteenMinute":
+                        startTimestamp += 60000 * 15;
+                        break;
+                    case "thirtyMinute":
+                        startTimestamp += 60000 * 30;
+                        break;
+                    case "hour":
+                        startTimestamp += 60000 * 60;
+                        break;
+                    case "twoHour":
+                        startTimestamp += 60000 * 60 * 2;
+                        break;
+                    case "fourHour":
+                        startTimestamp += 60000 * 60 * 4;
+                        break;
+                    case "sixHour":
+                        startTimestamp += 60000 * 60 * 6;
+                        break;
+                    case "twelveHour":
+                        startTimestamp += 60000 * 60 * 12;
+                        break;
+                    case "day":
+                        startTimestamp += 60000 * 60 * 24;
+                        break;
+                }
+                i++;
+            } else {
+                if (Instant.now().toEpochMilli() <= startTimestamp){
+                    Instant stop = Instant.now();
+                    System.out.println(Duration.between(start, stop).getNano());
+                    return res;
+                }
+                else {
+                    CountedpacketsResult countedpacketsResult = new CountedpacketsResult();
+                    countedpacketsResult.setAvgEstimatedDevices(0);
+                    countedpacketsResult.setTotalPackets(0);
+                    countedpacketsResult.setDistinctMacAddresses(0);
+                    countedpacketsResult.setDistinctFingerprints(0);
+                    countedpacketsResult.setStartTimestamp(startTimestamp);
+                    countedpacketsResult.setLocalPackets(0);
+                    countedpacketsResult.setGlobalPackets(0);
+                    res.add(i, countedpacketsResult);
+                    switch (resolution) {
+                        case "fiveMinute":
+                            startTimestamp += 60000 * 5;
+                            break;
+                        case "fifteenMinute":
+                            startTimestamp += 60000 * 15;
+                            break;
+                        case "thirtyMinute":
+                            startTimestamp += 60000 * 30;
+                            break;
+                        case "hour":
+                            startTimestamp += 60000 * 60;
+                            break;
+                        case "twoHour":
+                            startTimestamp += 60000 * 60 * 2;
+                            break;
+                        case "fourHour":
+                            startTimestamp += 60000 * 60 * 4;
+                            break;
+                        case "sixHour":
+                            startTimestamp += 60000 * 60 * 6;
+                            break;
+                        case "twelveHour":
+                            startTimestamp += 60000 * 60 * 12;
+                            break;
+                        case "day":
+                            startTimestamp += 60000 * 60 * 24;
+                            break;
+
+                    }
+                    i++;
+                }
+            }
+        }
+        Instant stop = Instant.now();
+        System.out.println(Duration.between(start, stop).getNano());
         return res;
     }
 
     @Override
     public List<CountedpacketsResult> getResultsByRoom(String building, String room, long from, long to, String resolution) {
+        Instant start = Instant.now();
         MatchOperation matchOperation = match(new Criteria("startTimestamp").gte(from).lt(to).and("buildingId").is(building).and("roomId").is(room));
         GroupOperation groupOperation;
         switch (resolution) {
@@ -179,13 +290,122 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
         Aggregation aggregation = newAggregation(matchOperation, groupOperation, sortOperation);
         AggregationResults results = mongoTemplate.aggregate(aggregation, "countedPackets", CountedpacketsResult.class);
         List<CountedpacketsResult> res = results.getMappedResults();
+        LocalDateTime ldt = Instant.ofEpochMilli(from).atZone(ZoneId.of("CET")).toLocalDateTime();
+        long startTimestamp = 0;
+        long endTimestamp = 0;
+        if (ldt.getMinute() % 5 != 0)
+            startTimestamp = from + ((5 - (ldt.getMinute() % 5)) * 60000);
+        else
+            startTimestamp = from;
+        ldt = Instant.ofEpochMilli(to).atZone(ZoneId.of("CET")).toLocalDateTime();
+        if (ldt.getMinute() % 5 != 0)
+            endTimestamp = to - ((5 - (ldt.getMinute() % 5)) * 60000);
+        else
+            endTimestamp = to;
+        int i = 0;
+        while (startTimestamp < endTimestamp) {
+            if (i < res.size()) {
+                CountedpacketsResult cpr = res.get(i);
+                if (startTimestamp < cpr.getStartTimestamp()) {
+                    CountedpacketsResult countedpacketsResult = new CountedpacketsResult();
+                    countedpacketsResult.setAvgEstimatedDevices(0);
+                    countedpacketsResult.setTotalPackets(0);
+                    countedpacketsResult.setDistinctMacAddresses(0);
+                    countedpacketsResult.setDistinctFingerprints(0);
+                    countedpacketsResult.setStartTimestamp(startTimestamp);
+                    countedpacketsResult.setLocalPackets(0);
+                    countedpacketsResult.setGlobalPackets(0);
+                    res.add(i, countedpacketsResult);
+                }
+                switch (resolution) {
+                    case "fiveMinute":
+                        startTimestamp += 60000 * 5;
+                        break;
+                    case "fifteenMinute":
+                        startTimestamp += 60000 * 15;
+                        break;
+                    case "thirtyMinute":
+                        startTimestamp += 60000 * 30;
+                        break;
+                    case "hour":
+                        startTimestamp += 60000 * 60;
+                        break;
+                    case "twoHour":
+                        startTimestamp += 60000 * 60 * 2;
+                        break;
+                    case "fourHour":
+                        startTimestamp += 60000 * 60 * 4;
+                        break;
+                    case "sixHour":
+                        startTimestamp += 60000 * 60 * 6;
+                        break;
+                    case "twelveHour":
+                        startTimestamp += 60000 * 60 * 12;
+                        break;
+                    case "day":
+                        startTimestamp += 60000 * 60 * 24;
+                        break;
+                }
+                i++;
+            } else {
+                if (Instant.now().toEpochMilli() <= startTimestamp){
+                    Instant stop = Instant.now();
+                    System.out.println(Duration.between(start, stop).getNano());
+                    return res;
+                }
+                else {
+                    CountedpacketsResult countedpacketsResult = new CountedpacketsResult();
+                    countedpacketsResult.setAvgEstimatedDevices(0);
+                    countedpacketsResult.setTotalPackets(0);
+                    countedpacketsResult.setDistinctMacAddresses(0);
+                    countedpacketsResult.setDistinctFingerprints(0);
+                    countedpacketsResult.setStartTimestamp(startTimestamp);
+                    countedpacketsResult.setLocalPackets(0);
+                    countedpacketsResult.setGlobalPackets(0);
+                    res.add(i, countedpacketsResult);
+                    switch (resolution) {
+                        case "fiveMinute":
+                            startTimestamp += 60000 * 5;
+                            break;
+                        case "fifteenMinute":
+                            startTimestamp += 60000 * 15;
+                            break;
+                        case "thirtyMinute":
+                            startTimestamp += 60000 * 30;
+                            break;
+                        case "hour":
+                            startTimestamp += 60000 * 60;
+                            break;
+                        case "twoHour":
+                            startTimestamp += 60000 * 60 * 2;
+                            break;
+                        case "fourHour":
+                            startTimestamp += 60000 * 60 * 4;
+                            break;
+                        case "sixHour":
+                            startTimestamp += 60000 * 60 * 6;
+                            break;
+                        case "twelveHour":
+                            startTimestamp += 60000 * 60 * 12;
+                            break;
+                        case "day":
+                            startTimestamp += 60000 * 60 * 24;
+                            break;
+
+                    }
+                    i++;
+                }
+            }
+        }
+        Instant stop = Instant.now();
+        System.out.println(Duration.between(start, stop).getNano());
         return res;
     }
 
     @Override
     public List<CountedpacketsResult> getResultsBySniffer(String building, String room, String sniffer, long from, long to, String resolution) {
         Instant start = Instant.now();
-        MatchOperation matchOperation = match(new Criteria("startTimestamp").gte(from).lt(to).and("buildingId").is(building).and("roomId").is(room).and("snifferName").is(sniffer));
+        MatchOperation matchOperation = match(new Criteria("startTimestamp").gte(from).lt(to).and("buildingId").is(building).and("roomId").is(room).and("snifferId").is(sniffer));
         GroupOperation groupOperation;
         switch (resolution) {
             case "fiveMinute":
