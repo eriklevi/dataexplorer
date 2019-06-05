@@ -1,13 +1,14 @@
 package com.example.dataexplorer.entities;
 
 public class DeviceData {
-    String mac;
-    long timestamp;
-    String snifferId;
-    String snifferName;
-    String snifferBuilding;
-    String snifferRoom;
-    int sequenceNumber;
+    private String mac;
+    private long timestamp;
+    private String snifferId;
+    private String snifferName;
+    private String snifferBuilding;
+    private String snifferRoom;
+    private int sequenceNumber;
+    private float rssi;
 
     public DeviceData() {
     }
@@ -66,5 +67,13 @@ public class DeviceData {
 
     public void setSequenceNumber(int sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public float getRssi() {
+        return rssi;
+    }
+
+    public void setRssi(float rssi) {
+        this.rssi = rssi;
     }
 }

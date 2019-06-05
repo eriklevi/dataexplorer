@@ -1,17 +1,16 @@
 package com.example.dataexplorer.entities;
 
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class FlowData {
-    private String snifferId;
+    private List<String> snifferId;
     private int year;
     private int month;
     private int dayOfMonth;
     private int hour;
     private int fiveMinute;
-    private int heat;
+    private List<Integer> heat;
 
     public FlowData() {
     }
@@ -56,19 +55,19 @@ public class FlowData {
         this.fiveMinute = fiveMinute;
     }
 
-    public int getHeat() {
+    public List<Integer> getHeat() {
         return heat;
     }
 
-    public void setHeat(int heat) {
+    public void setHeat(List<Integer> heat) {
         this.heat = heat;
     }
 
-    public String getSnifferId() {
+    public List<String> getSnifferId() {
         return snifferId;
     }
 
-    public void setSnifferId(String snifferId) {
+    public void setSnifferId(List<String> snifferId) {
         this.snifferId = snifferId;
     }
 }

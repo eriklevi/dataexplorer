@@ -21,13 +21,24 @@ public class FlowServiceImpl implements FlowService {
     @Override
     public List<FlowData> getFlow(long from, long to) {
         MatchOperation matchOperation = match(new Criteria("timestamp").gte(from).lt(to));
-        ProjectionOperation projectionOperation = project("rssi","snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute")
+        ProjectionOperation projectionOperation = project("rssi","snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute", "deviceMac", "fingerprint")
                 .andExpression("(rssi + 100) / 100").as("normalizedRssi");
         GroupOperation groupOperation = group("snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute")
                 .sum("normalizedRssi").as("heat");
         SortOperation sortOperation = sort(new Sort(Sort.Direction.ASC, "year", "month", "dayOfMonth", "hour", "fiveMinute"));
-        Aggregation aggregation = newAggregation(matchOperation, projectionOperation,groupOperation, sortOperation);
-        AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", FlowData.class);
-        return aggregationResults.getMappedResults();
+        GroupOperation groupOperation1 = group("year", "month", "dayOfMonth", "hour", "fiveMinute")
+                .push("snifferId").as("snifferId")
+                .push("heat").as("heat")
+                .addToSet("deviceMac").as("macs")
+                .addToSet("fingerprint").as("fingerprints");
+        ProjectionOperation projectionOperation2 = project("heat","snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute")
+                .andExpression("(rssi + 100) / 100").as("normalizedRssi")
+                .andExpression("macs").size().as("distinctMacs")
+                .andExpression("fingerprints").size().as("distinctFingerprints");
+        //Aggregation aggregation = newAggregation(matchOperation, projectionOperation,groupOperation, sortOperation);
+        Aggregation aggregation1 = newAggregation(matchOperation,projectionOperation, groupOperation, groupOperation1, sortOperation);
+        //AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", FlowData.class);
+        AggregationResults aggregationResults1 = mongoTemplate.aggregate(aggregation1, "parsedPackets", FlowData.class);
+        return aggregationResults1.getMappedResults();
     }
 }
