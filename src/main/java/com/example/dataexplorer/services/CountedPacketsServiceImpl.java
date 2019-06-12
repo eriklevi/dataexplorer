@@ -35,7 +35,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "fifteenMinute":
@@ -43,7 +44,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "thirtyMinute":
@@ -51,7 +53,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "hour":
@@ -59,7 +62,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "twoHour":
@@ -67,7 +71,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "fourHour":
@@ -75,7 +80,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "sixHour":
@@ -83,7 +89,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "twelveHour":
@@ -91,7 +98,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             default:
@@ -101,6 +109,7 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
         Aggregation aggregation = newAggregation(matchOperation, groupOperation, sortOperation);
         AggregationResults results = mongoTemplate.aggregate(aggregation, "countedPackets", CountedpacketsResult.class);
         List<CountedpacketsResult> res = results.getMappedResults();
+        res = new ArrayList<>(res);
         LocalDateTime ldt = Instant.ofEpochMilli(from).atZone(ZoneId.of("CET")).toLocalDateTime();
         long startTimestamp = 0;
         long endTimestamp = 0;
@@ -224,7 +233,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "fifteenMinute":
@@ -232,7 +242,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "thirtyMinute":
@@ -240,7 +251,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "hour":
@@ -248,7 +260,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "twoHour":
@@ -256,7 +269,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "fourHour":
@@ -264,7 +278,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "sixHour":
@@ -272,7 +287,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             case "twelveHour":
@@ -280,7 +296,8 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
                         .sum("totalPackets").as("totalPackets")
                         .sum("globalPackets").as("globalPackets")
                         .sum("localPackets").as("localPackets")
-                        .avg("totalEstimatedDevices").as("avgEstimatedDevices")
+                        .avg("totalDistinctMacAddresses").as("distinctMacAddresses")
+                        .avg("totalDistinctFingerprints").as("distinctFingerprints")
                         .min("startTimestamp").as("startTimestamp");
                 break;
             default:
@@ -290,6 +307,7 @@ public class CountedPacketsServiceImpl implements CountedPacketsService {
         Aggregation aggregation = newAggregation(matchOperation, groupOperation, sortOperation);
         AggregationResults results = mongoTemplate.aggregate(aggregation, "countedPackets", CountedpacketsResult.class);
         List<CountedpacketsResult> res = results.getMappedResults();
+        res = new ArrayList<>(res);
         LocalDateTime ldt = Instant.ofEpochMilli(from).atZone(ZoneId.of("CET")).toLocalDateTime();
         long startTimestamp = 0;
         long endTimestamp = 0;

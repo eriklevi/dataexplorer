@@ -24,19 +24,20 @@ public class FlowServiceImpl implements FlowService {
         ProjectionOperation projectionOperation = project("rssi","snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute", "deviceMac", "fingerprint")
                 .andExpression("(rssi + 100) / 100").as("normalizedRssi");
         GroupOperation groupOperation = group("snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute")
-                .sum("normalizedRssi").as("heat");
-        SortOperation sortOperation = sort(new Sort(Sort.Direction.ASC, "year", "month", "dayOfMonth", "hour", "fiveMinute"));
-        GroupOperation groupOperation1 = group("year", "month", "dayOfMonth", "hour", "fiveMinute")
-                .push("snifferId").as("snifferId")
-                .push("heat").as("heat")
+                .sum("normalizedRssi").as("heat")
                 .addToSet("deviceMac").as("macs")
                 .addToSet("fingerprint").as("fingerprints");
         ProjectionOperation projectionOperation2 = project("heat","snifferId", "year", "month", "dayOfMonth", "hour", "fiveMinute")
-                .andExpression("(rssi + 100) / 100").as("normalizedRssi")
                 .andExpression("macs").size().as("distinctMacs")
                 .andExpression("fingerprints").size().as("distinctFingerprints");
+        GroupOperation groupOperation1 = group("year", "month", "dayOfMonth", "hour", "fiveMinute")
+                .push("snifferId").as("snifferId")
+                .push("heat").as("heat")
+                .push("distinctMacs").as("distinctMacs")
+                .push("distinctFingerprints").as("distinctFingerprints");
+        SortOperation sortOperation = sort(new Sort(Sort.Direction.ASC, "year", "month", "dayOfMonth", "hour", "fiveMinute"));
         //Aggregation aggregation = newAggregation(matchOperation, projectionOperation,groupOperation, sortOperation);
-        Aggregation aggregation1 = newAggregation(matchOperation,projectionOperation, groupOperation, groupOperation1, sortOperation);
+        Aggregation aggregation1 = newAggregation(matchOperation,projectionOperation, groupOperation, projectionOperation2, groupOperation1, sortOperation);
         //AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", FlowData.class);
         AggregationResults aggregationResults1 = mongoTemplate.aggregate(aggregation1, "parsedPackets", FlowData.class);
         return aggregationResults1.getMappedResults();

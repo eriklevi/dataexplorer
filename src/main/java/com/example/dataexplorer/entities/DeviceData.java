@@ -9,6 +9,8 @@ public class DeviceData {
     private String snifferRoom;
     private int sequenceNumber;
     private float rssi;
+    private int distinctMacs;
+    private int distinctFingerprints;
 
     public DeviceData() {
     }
@@ -75,5 +77,21 @@ public class DeviceData {
 
     public void setRssi(float rssi) {
         this.rssi = rssi;
+    }
+
+    public int getDistinctMacs() {
+        return distinctMacs;
+    }
+
+    public void setDistinctMacs(int distinctMacs) {
+        this.distinctMacs = distinctMacs;
+    }
+
+    public int getDistinctFingerprints() {
+        return distinctFingerprints;
+    }
+
+    public void setDistinctFingerprints(int distinctFingerprints) {
+        this.distinctFingerprints = distinctFingerprints;
     }
 }

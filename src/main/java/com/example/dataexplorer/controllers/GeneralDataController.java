@@ -1,5 +1,7 @@
 package com.example.dataexplorer.controllers;
 
+import com.example.dataexplorer.entities.CountedPacket;
+import com.example.dataexplorer.entities.MeanResult;
 import com.example.dataexplorer.entities.PacketsStats;
 import com.example.dataexplorer.services.GeneralDataService;
 import org.slf4j.Logger;
@@ -32,9 +34,14 @@ public class GeneralDataController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value= "/counted/{id}/last", method = RequestMethod.GET)
-    public int getLastDeviceNumberEstimationById(@PathVariable String id){
+    public CountedPacket getLastDeviceNumberEstimationById(@PathVariable String id){
         return this.generalDataService.getLastDeviceNumberEstimationById(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    @RequestMapping(value= "/counted/{id}/mean", method = RequestMethod.GET)
+    public MeanResult getLastDeviceNumberEstimationById(@PathVariable String id, @RequestParam long timestamp){
+        return this.generalDataService.getMeanestimation(id, timestamp);
+    }
 
 }
