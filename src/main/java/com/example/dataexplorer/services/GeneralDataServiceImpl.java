@@ -68,12 +68,12 @@ public class GeneralDataServiceImpl implements GeneralDataService {
         MatchOperation matchOperation = match(new Criteria("snifferId").is(id)
                 .and("dayOfWeek").is(ldt.getDayOfWeek().getValue())
                 .and("hour").is(ldt.getHour())
-                .and("fiveMinute").is((ldt.getMinute()/5)+1));
+                /*.and("fiveMinute").is((ldt.getMinute()/5)+1)*/);
         GroupOperation groupOperation = group("snifferId", "dayOfWeek", "hour", "fiveMinute")
-                .avg("totalestimatedDevices").as("mean");
+                .avg("totalEstimatedDevices").as("mean");
         ProjectionOperation projectionOperation = project("mean");
-        Aggregation aggregation1 = newAggregation(matchOperation, groupOperation);
-        AggregationResults aggregationResults1 = mongoTemplate.aggregate(aggregation1, "parsedPackets", MeanResult.class);
+        Aggregation aggregation1 = newAggregation(matchOperation, groupOperation, projectionOperation);
+        AggregationResults aggregationResults1 = mongoTemplate.aggregate(aggregation1, "countedPackets", MeanResult.class);
         return (MeanResult)aggregationResults1.getMappedResults().get(0);
     }
 }

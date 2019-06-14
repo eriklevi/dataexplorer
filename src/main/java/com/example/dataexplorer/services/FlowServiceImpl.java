@@ -1,6 +1,8 @@
 package com.example.dataexplorer.services;
 
 import com.example.dataexplorer.entities.FlowData;
+import com.example.dataexplorer.entities.PositionFlowData;
+import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -41,5 +43,28 @@ public class FlowServiceImpl implements FlowService {
         //AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", FlowData.class);
         AggregationResults aggregationResults1 = mongoTemplate.aggregate(aggregation1, "parsedPackets", FlowData.class);
         return aggregationResults1.getMappedResults();
+    }
+
+    @Override
+    public List<PositionFlowData> getFlow2(long from, long to) {
+        MatchOperation matchOperation = match(new Criteria("timestamp").gte(from).lt(to).and("global").is(true));
+        GroupOperation groupOperation1 = group("fcs", "hour", "minute", "snifferId")
+                .avg("rssi").as("rssi")
+                .min("timestamp").as("startTimestamp");
+        SortOperation sortOperation = sort(new Sort(Sort.Direction.DESC, "startTimestamp"));
+        UnwindOperation unwindOperation = unwind("_id");
+        GroupOperation groupOperation2 = group("_id.fcs")
+                .push(new BasicDBObject
+                        ("hour", "$_id.hour").append
+                        ("minute", "$_id.minute").append
+                        ("snifferId", "$_id.snifferId").append
+                        ("startTimestamp", "$startTimestamp").append
+                        ("rssi", "$rssi")).as("data");
+        ProjectionOperation projectionOperation = project()
+                .andExpression("_id.fcs").as("fcs")
+                .andExpression("data").as("data");
+        Aggregation aggregation = newAggregation(matchOperation, groupOperation1, sortOperation, groupOperation2);
+        AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", PositionFlowData.class);
+        return aggregationResults.getMappedResults();
     }
 }

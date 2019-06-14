@@ -2,6 +2,7 @@ package com.example.dataexplorer.controllers;
 
 import com.example.dataexplorer.entities.CountedpacketsResult;
 import com.example.dataexplorer.entities.FlowData;
+import com.example.dataexplorer.entities.PositionFlowData;
 import com.example.dataexplorer.services.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,4 +21,11 @@ public class FlowController {
     public List<FlowData> getFlow(@RequestParam long from, @RequestParam long to){
         return flowService.getFlow(from, to);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    @RequestMapping(value= "/flow2", method = RequestMethod.GET)
+    public List<PositionFlowData> getFlow2(@RequestParam long from, @RequestParam long to){
+        return flowService.getFlow2(from, to);
+    }
+
 }
