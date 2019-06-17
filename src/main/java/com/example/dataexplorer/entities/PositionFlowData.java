@@ -3,18 +3,36 @@ package com.example.dataexplorer.entities;
 import java.util.List;
 
 public class PositionFlowData {
-    private String _id;
+    private String fcs;
+    private int hour;
+    private int minute;
     private List<PositionFlowDataPoints> data;
 
     public PositionFlowData() {
     }
 
-    public String get_id() {
-        return _id;
+    public String getFcs() {
+        return fcs;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setFcs(String fcs) {
+        this.fcs = fcs;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
     }
 
     public List<PositionFlowDataPoints> getData() {

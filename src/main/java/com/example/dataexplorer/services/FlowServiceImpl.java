@@ -51,19 +51,18 @@ public class FlowServiceImpl implements FlowService {
         GroupOperation groupOperation1 = group("fcs", "hour", "minute", "snifferId")
                 .avg("rssi").as("rssi")
                 .min("timestamp").as("startTimestamp");
-        SortOperation sortOperation = sort(new Sort(Sort.Direction.DESC, "startTimestamp"));
-        UnwindOperation unwindOperation = unwind("_id");
-        GroupOperation groupOperation2 = group("_id.fcs")
+        SortOperation sortOperation = sort(new Sort(Sort.Direction.ASC, "data.startTimestamp"));
+        GroupOperation groupOperation2 = group("_id.fcs", "_id.hour", "_id.minute")
                 .push(new BasicDBObject
-                        ("hour", "$_id.hour").append
-                        ("minute", "$_id.minute").append
                         ("snifferId", "$_id.snifferId").append
                         ("startTimestamp", "$startTimestamp").append
                         ("rssi", "$rssi")).as("data");
         ProjectionOperation projectionOperation = project()
-                .andExpression("_id.fcs").as("fcs")
+                .andExpression("fcs").as("fcs")
+                .andExpression("minute").as("minute")
+                .andExpression("hour").as("hour")
                 .andExpression("data").as("data");
-        Aggregation aggregation = newAggregation(matchOperation, groupOperation1, sortOperation, groupOperation2);
+        Aggregation aggregation = newAggregation(matchOperation, groupOperation1,groupOperation2, sortOperation, projectionOperation);
         AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", PositionFlowData.class);
         return aggregationResults.getMappedResults();
     }
