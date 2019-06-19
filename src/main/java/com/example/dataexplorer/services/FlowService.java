@@ -8,4 +8,5 @@ import java.util.List;
 public interface FlowService {
     List<FlowData> getFlow(long from, long to);
     List<PositionFlowData> getFlow2(long from, long to);
+    List<PositionFlowData> getFlow2ByMac(long from, long to, String mac);
 }

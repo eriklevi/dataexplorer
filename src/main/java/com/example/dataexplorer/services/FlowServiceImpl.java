@@ -62,7 +62,30 @@ public class FlowServiceImpl implements FlowService {
                 .andExpression("minute").as("minute")
                 .andExpression("hour").as("hour")
                 .andExpression("data").as("data");
-        Aggregation aggregation = newAggregation(matchOperation, groupOperation1,groupOperation2, sortOperation, projectionOperation);
+        Aggregation aggregation = newAggregation(matchOperation, groupOperation1,groupOperation2, sortOperation, projectionOperation)
+                .withOptions(newAggregationOptions().allowDiskUse(true).build());
+        AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", PositionFlowData.class);
+        return aggregationResults.getMappedResults();
+    }
+
+    @Override
+    public List<PositionFlowData> getFlow2ByMac(long from, long to, String mac) {
+        MatchOperation matchOperation = match(new Criteria("timestamp").gte(from).lt(to).and("global").is(true).and("deviceMac").is(mac));
+        GroupOperation groupOperation1 = group("fcs", "hour", "minute", "snifferId")
+                .avg("rssi").as("rssi")
+                .min("timestamp").as("startTimestamp");
+        SortOperation sortOperation = sort(new Sort(Sort.Direction.ASC, "data.startTimestamp"));
+        GroupOperation groupOperation2 = group( "_id.hour", "_id.minute")
+                .push(new BasicDBObject
+                        ("snifferId", "$_id.snifferId").append
+                        ("startTimestamp", "$startTimestamp").append
+                        ("rssi", "$rssi")).as("data");
+        ProjectionOperation projectionOperation = project()
+                .andExpression("minute").as("minute")
+                .andExpression("hour").as("hour")
+                .andExpression("data").as("data");
+        Aggregation aggregation = newAggregation(matchOperation, groupOperation1,groupOperation2, sortOperation, projectionOperation)
+                .withOptions(newAggregationOptions().allowDiskUse(true).build());
         AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", PositionFlowData.class);
         return aggregationResults.getMappedResults();
     }

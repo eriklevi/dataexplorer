@@ -24,7 +24,10 @@ public class FlowController {
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value= "/flow2", method = RequestMethod.GET)
-    public List<PositionFlowData> getFlow2(@RequestParam long from, @RequestParam long to){
+    public List<PositionFlowData> getFlow2(@RequestParam long from, @RequestParam long to, @RequestParam(required = false) String mac){
+        if(mac != null) {
+            return flowService.getFlow2ByMac(from, to ,mac);
+        }
         return flowService.getFlow2(from, to);
     }
 
