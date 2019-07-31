@@ -45,22 +45,13 @@ public class MQTTPublisher implements MqttCallback, DisposableBean, Initializing
     @Value("${mqtt.keep-alive-seconds}")
     private int keepAliveInterval;
 
-    private void config(){
+    private void config() {
         String brokerUrl = "tcp://" + this.broker + ":" + this.port;
         MemoryPersistence persistence = new MemoryPersistence();
         MqttConnectOptions connectionOptions = new MqttConnectOptions();
         try {
             this.mqttClient = new MqttClient(brokerUrl, clientId, persistence);
-            connectionOptions.setCleanSession(true);
-            connectionOptions.setAutomaticReconnect(autoReconnect); //try to reconnect to server from 1 second after fail up to 2 minutes delay
-            if(useCredentials){
-                connectionOptions.setUserName(userName);
-                connectionOptions.setPassword(password.toCharArray());
-            }
-            connectionOptions.setKeepAliveInterval(keepAliveInterval);
-            connectionOptions.setConnectionTimeout(0); //wait until connection successful or fail
             this.mqttClient.setCallback(this);
-            this.mqttClient.connect(connectionOptions);
         } catch (MqttException me) {
             logger.error("resason "+ me.getReasonCode());
             logger.error("message "+ me.getMessage());
@@ -69,9 +60,42 @@ public class MQTTPublisher implements MqttCallback, DisposableBean, Initializing
         }
     }
 
+    private void connect() {
+        boolean success = false;
+        while(!success) {
+            try {
+                MqttConnectOptions connectionOptions = new MqttConnectOptions();
+                connectionOptions.setCleanSession(true);
+                connectionOptions.setAutomaticReconnect(autoReconnect); //try to reconnect to server from 1 second after fail up to 2 minutes delay
+                if(useCredentials){
+                    connectionOptions.setUserName(userName);
+                    connectionOptions.setPassword(password.toCharArray());
+                }
+                connectionOptions.setKeepAliveInterval(keepAliveInterval);
+                connectionOptions.setConnectionTimeout(0); //wait until connection successful or fail
+                this.mqttClient.connect(connectionOptions);
+                success = true;
+            } catch (MqttException me) {
+                logger.error("resason "+ me.getReasonCode());
+                logger.error("message "+ me.getMessage());
+                logger.error("cause "+ me.getCause());
+                me.printStackTrace();
+                logger.info("Reconnection in 30 seconds");
+                try{
+                    Thread.sleep(30000);
+                }
+                catch(Exception e) {
+                    logger.error("Eccezzione nella thread sleep");
+                }
+            }
+        }
+    }
+
     @Override
     public void connectionLost(Throwable throwable) {
         logger.error("Connection with broker lost!");
+        logger.info("Try to reconnect");
+        connect();
     }
 
     @Override
@@ -92,6 +116,7 @@ public class MQTTPublisher implements MqttCallback, DisposableBean, Initializing
     public void afterPropertiesSet() throws Exception {
         this.getBrokerInstance(); //uses Discovery client so it must be called after eureka setup
         this.config();
+        this.connect();
     }
 
     private void getBrokerInstance(){

@@ -48,20 +48,20 @@ public class FlowServiceImpl implements FlowService {
     @Override
     public List<PositionFlowData> getFlow2(long from, long to) {
         MatchOperation matchOperation = match(new Criteria("timestamp").gte(from).lt(to).and("global").is(true));
-        GroupOperation groupOperation1 = group("fcs", "hour", "minute", "snifferId")
+        GroupOperation groupOperation1 = group("deviceMac", "hour", "minute", "snifferId", "tenMinute")
                 .avg("rssi").as("rssi")
                 .min("timestamp").as("startTimestamp");
         SortOperation sortOperation = sort(new Sort(Sort.Direction.ASC, "data.startTimestamp"));
-        GroupOperation groupOperation2 = group("_id.fcs", "_id.hour", "_id.minute")
+        GroupOperation groupOperation2 = group( "_id.hour", "_id.minute")
                 .push(new BasicDBObject
                         ("snifferId", "$_id.snifferId").append
                         ("startTimestamp", "$startTimestamp").append
                         ("rssi", "$rssi")).as("data");
         ProjectionOperation projectionOperation = project()
-                .andExpression("fcs").as("fcs")
-                .andExpression("minute").as("minute")
-                .andExpression("hour").as("hour")
-                .andExpression("data").as("data");
+                .and("minute").as("minute")
+                .and("hour").as("hour")
+                .and("data").as("data")
+                .andExclude("_id");
         Aggregation aggregation = newAggregation(matchOperation, groupOperation1,groupOperation2, sortOperation, projectionOperation)
                 .withOptions(newAggregationOptions().allowDiskUse(true).build());
         AggregationResults aggregationResults = mongoTemplate.aggregate(aggregation, "parsedPackets", PositionFlowData.class);
