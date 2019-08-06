@@ -66,6 +66,7 @@ public class GeneralDataServiceImpl implements GeneralDataService {
     public MeanResult getMeanestimation(String id, long timestamp) {
         LocalDateTime ldt = Instant.ofEpochMilli(timestamp).atZone(ZoneId.of("CET")).toLocalDateTime();
         MatchOperation matchOperation = match(new Criteria("snifferId").is(id)
+                .and("month").is(ldt.getMonth().getValue())
                 .and("dayOfWeek").is(ldt.getDayOfWeek().getValue())
                 .and("hour").is(ldt.getHour())
                 /*.and("fiveMinute").is((ldt.getMinute()/5)+1)*/);
